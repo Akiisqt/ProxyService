@@ -1,5 +1,5 @@
 {
-    "name": "ProxyService",
+    "name": "proxyservice",
     "description": "For Cloudflare Workers, ProxyService provides a quick and cheap way to proxy on roblox, while also allowing PATCH, PUT, and DELETE, requests.",
     "version": "1.0.0",
     "author": "akiisqt <brightneonlights1@gmail.com>",
