@@ -1,8 +1,8 @@
 {
-    "name": "basicproxy",
-    "description": "A basic Roblox proxy for use on Cloudflare Workers.",
+    "name": "ProxyService",
+    "description": "For Cloudflare Workers, ProxyService provides a quick and cheap way to proxy on roblox, while also allowing PATCH, PUT, and DELETE, requests.",
     "version": "1.0.0",
-    "author": "pyxfluff <business@notpyx.me> iiPython <ben@iipython.dev>",
+    "author": "akiisqt <brightneonlights1@gmail.com>",
     "scripts": {
         "run": "node index.js",
         "deploy": "wrangler deploy"

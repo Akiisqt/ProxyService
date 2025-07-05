@@ -1,8 +1,5 @@
-// Copyright (c) 2024 iiPython
-
-// List of domains
-// Would of preferred to use JSON, but CF doesn't allow `require("fs")`
-const domains = [
+// aki6
+const Domains = [
     "apis",
     "assetdelivery",
     "avatar",
@@ -32,36 +29,41 @@ const domains = [
     "trades",
     "translations",
     "users"
-]
+];
 
-// Export our request handler
 export default {
-    async fetch(request) {
-        const url = new URL(request.url);
-        const path = url.pathname.split(/\//);
+    async fetch(Request) {
+        const Url = new URL(Request.url);
+        const Path = Url.pathname.split(/\//);
 
-        if (!path[1].trim()) 
+        if (!Path[1].trim()) 
             return new Response(JSON.stringify({ message: "Missing ROBLOX subdomain." }), { status: 400 });
+        if (!Domains.includes(Path[1])) 
+            return new Response(JSON.stringify({ message: "Specified subdomain is not allowed." }), { status: 401 });
 
-        //if (!domains.includes(path[1])) 
-        //    return new Response(JSON.stringify({ message: "Specified subdomain is not allowed." }), { status: 401 });
-
-        const headers = new Headers(request.headers);
-        headers.delete("host");
-        headers.delete("roblox-id");
-        headers.delete("user-agent");
-        headers["user-agent"] = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
-
-
-        const init = {
-            method: request.method,
-            headers,
-        };
-
-        if (request.method !== "GET" && request.method !== "HEAD") {
-            init.body = await request.text();
+        var Method = Request.method;
+        var NewHeaders = new Headers();
+        for (const [Key, Value] of (new Headers(Request.headers)).entries()) {
+            if (Key.toLowerCase().startsWith("proxy-")) {
+                const NewKey = Key.slice(6); // removing the proxy-
+                if (NewKey.toLowerCase() == "override-method") {
+                    Method = Value.toUpperCase();
+                } else {
+                    NewHeaders.set(NewKey, Value);
+                }
+            } else {
+                NewHeaders.set(Key, Value);
+            }
         }
+        NewHeaders.delete("host");
+        NewHeaders.delete("roblox-id");
+        NewHeaders.delete("user-agent");
+        NewHeaders.set("user-agent", "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36");
 
-        return fetch(`https://${path[1]}.roblox.com/${path.slice(2).join("/")}${url.search}`, init);
+        return fetch(`https://${Path[1]}.roblox.com/${Path.slice(2).join("/")}${Url.search}`, {
+            method : Method,
+            headers: NewHeaders,
+            body: ["POST", "PUT", "PATCH"].includes(Method) ? await request.text() : undefined,
+        });
     }
 };

@@ -5,3 +5,5 @@ bun.lock
 package-lock.json
 
 .dev.vars*
+.gitignore
+wrangler.toml
