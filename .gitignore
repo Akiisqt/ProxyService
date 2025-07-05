@@ -1,5 +1,5 @@
-.wrangler
+*.wrangler
 wrangler.toml
-.gitignore
+*.gitignore
 node_modules/
 package-lock.json
