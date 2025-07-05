@@ -2,8 +2,4 @@
 wrangler.toml
 .gitignore
 node_modules/
-
-bun.lock
 package-lock.json
-
-.dev.vars*
