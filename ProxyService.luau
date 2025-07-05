@@ -17,6 +17,22 @@ local ProxyService = {};
 local POST_METHODS = {'POST', 'PUT', 'PATCH'};
 local GET_METHODS = {'GET', 'DELETE'};
 
+type PostMethod = (self : ProxyService, Subdomain : string, Subdirectory : string, Data : string, ContentType : Enum.HttpContentType, Headers : { [string] : string }? ) -> unknown;
+type GetMethod = (self : ProxyService, Subdomain : string, Subdirectory : string, Data : string, ContentType : Enum.HttpContentType, Headers : { [string] : string }? ) -> unknown;
+export type ProxyService = {
+	New : ( Root : string ) -> ProxyService,
+	Root : string,
+
+	-- Post-based methods
+	Post: PostMethod,
+	Put: PostMethod,
+	Patch: PostMethod,
+
+	-- Get-based methods
+	Get: GetMethod,
+	Delete: GetMethod,
+};
+
 function ProxyService:New(Root : string)
 	self.Root = string.format("https://%s/", Root);
 
@@ -41,7 +57,7 @@ local ProcessBody = function(Body)
 end
 
 local HandlePost = function(Method)
-	return function (self, Path : string, Data : string, ContentType : Enum.HttpContentType, Headers : {})
+	return function (self, Path : string, Data : string, ContentType : Enum.HttpContentType, Headers : {}?)
 		Headers = ProcessHeaders(Method, Headers == nil and {} or Headers);
 		local Body = HttpService:PostAsync(self.Root .. Path, Data, ContentType, false, Headers);
 
@@ -50,7 +66,7 @@ local HandlePost = function(Method)
 end
 
 local HandleGet = function(Method)
-	return function (self, Path : string, NoCache : boolean, Headers : {})
+	return function (self, Path : string, NoCache : boolean?, Headers : {}?)
 		Headers = ProcessHeaders(Method, Headers or {});
 		local Body = HttpService:GetAsync(self.Root .. Path, NoCache == nil and true or NoCache, Headers);
 
