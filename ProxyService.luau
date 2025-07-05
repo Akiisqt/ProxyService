@@ -42,7 +42,7 @@ end
 
 local HandlePost = function(Method)
 	return function (self, Path : string, Data : string, ContentType : Enum.HttpContentType, Headers : {})
-		Headers = ProcessHeaders(Method, Headers or {});
+		Headers = ProcessHeaders(Method, Headers == nil and {} or Headers);
 		local Body = HttpService:PostAsync(self.Root .. Path, Data, ContentType, false, Headers);
 
 		return ProcessBody(Body);
@@ -52,7 +52,7 @@ end
 local HandleGet = function(Method)
 	return function (self, Path : string, NoCache : boolean, Headers : {})
 		Headers = ProcessHeaders(Method, Headers or {});
-		local Body = HttpService:GetAsync(self.Root .. Path, NoCache, Headers);
+		local Body = HttpService:GetAsync(self.Root .. Path, NoCache == nil and true or NoCache, Headers);
 
 		return ProcessBody(Body);
 	end
